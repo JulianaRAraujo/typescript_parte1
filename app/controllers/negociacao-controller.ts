@@ -1,6 +1,7 @@
 import { NegociacoesView } from './../views/negociacoes-view.js';
 import { Negociacao } from "../models/negociacao.js";
 import { Negociacoes } from "../models/negociacoes.js";
+import { MensagemView } from '../views/mensagem.js';
 
 export class Negociacaocontroller {
 
@@ -9,20 +10,27 @@ export class Negociacaocontroller {
     private _inputValor:HTMLInputElement;
     private negociacoes  = new Negociacoes();
     private negociacoesView = new NegociacoesView('#negociacoesView');
+    private mensagemView = new MensagemView('#mensagemView');
 
     constructor(){
         this._inputData = document.querySelector('#data');
         this._inputQuantidade = document.querySelector('#quantidade');
         this._inputValor= document.querySelector('#valor');
-        this.negociacoesView.template();
-        this.negociacoesView.update();
+        this.negociacoesView.update(this.negociacoes);
+   
     }
 
     adicionar():void {
        const negociacao = this.criarNegociacao();
-        this.negociacoes.adiciona(negociacao);
-        console.log(this.negociacoes.lista());
-        this.limparFormulario();
+       if(negociacao.data.getDay() > 0 && negociacao.data.getDay() <6 ){
+            this.negociacoes.adiciona(negociacao);
+            this.negociacoesView.update(this.negociacoes);
+            this.mensagemView.update('Negociação adicionada com sucesso.');
+            this.limparFormulario();
+       } else{
+            this.mensagemView.update('Negociação poderá ser realizada somente em dias uteis');
+       }
+      
     
     }
 
